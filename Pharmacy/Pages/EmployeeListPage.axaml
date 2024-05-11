@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:Pharmacy.Data.Models"
+             xmlns:pages="using:Pharmacy.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Pharmacy.Pages.EmployeeListPage"
+             x:DataType="pages:EmployeeListPage">
+
+    <DataGrid x:Name="DgEmployee"
+              IsReadOnly="True" 
+              GridLinesVisibility="All"
+              BorderThickness="1" BorderBrush="Gray"
+              ItemsSource="{Binding Employees}"
+              x:DataType="pages:EmployeeListPage">
+        
+        <Design.DataContext>
+            <pages:EmployeeListPage/>
+        </Design.DataContext>
+
+        <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding FirstName}" Header="Имя" x:DataType="models:Employee" />
+            <DataGridTextColumn Binding="{Binding LastName}" Header="Фамилия" x:DataType="models:Employee" />
+            <DataGridTextColumn Binding="{Binding Warehouse.Address}" Header="Фамилия" x:DataType="models:Employee" />
+            <DataGridTextColumn Binding="{Binding Role}" Header="Должность" x:DataType="models:Employee" />
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

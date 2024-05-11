@@ -14,6 +14,9 @@
       <TabItem Header="Добавление сотрудников">
         <pages:AddEmployeePage />
       </TabItem>
+      <TabItem Header="Сотрудники">
+        <pages:EmployeeListPage />
+      </TabItem>
       <TabItem Header="Товары на складе">
         <pages:ProductsPage />
       </TabItem>

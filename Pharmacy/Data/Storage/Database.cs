@@ -420,4 +420,41 @@ public class Database
             ReleaseConnection();
         }
     }
+
+    public async Task<List<Employee>> GetAllEmployeeAsync()
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM employee JOIN store.pharmacy_warehouse pw on pw.warehouse_id = employee.warehouse_id";
+
+            await using var reader = await command.ExecuteReaderAsync();
+            var result = new List<Employee>();
+            while (reader.Read())
+            {
+                result.Add(new Employee
+                {
+                    Id = reader.GetInt32("employee_id"),
+                    FirstName = reader.GetString("first_name"),
+                    LastName = reader.GetString("last_name"),
+                    Role = reader.GetString("role"),
+                    WarehouseId = reader.GetInt32("warehouse_id"),
+                    Warehouse = new Warehouse
+                    {
+                        Id = reader.GetInt32("warehouse_id"),
+                        Address = reader.GetString("address")
+                    }
+                });
+            }
+
+            await reader.CloseAsync();
+            command.Connection = null;
+            return result;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
 }
