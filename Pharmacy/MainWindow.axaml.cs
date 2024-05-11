@@ -18,19 +18,22 @@ public partial class MainWindow : Window
         NotificationManager = new WindowNotificationManager(GetTopLevel(this));
         
         UpdateConnectionStatus();
-        Database.Instance.Connection.StateChange += (_, _) =>
+        Database.Instance.ConnectionReadOnly.StateChange += (_, _) =>
         {
             Dispatcher.UIThread.Invoke(UpdateConnectionStatus);
         };
         BtnConnect.Click += (_, _) =>
         {
-            if (Database.Instance.Connection.State == ConnectionState.Open)
+            if (Database.Instance.ConnectionReadOnly.State == ConnectionState.Open)
             {
-                Database.Instance.Connection.CloseAsync();
+                Database.Instance.ConnectionReadOnly.CloseAsync();
             }
             else
             {
-                _ = Database.Instance.OpenIfNeededAsync();
+                if (!Database.Instance.IsOpened)
+                {
+                    _ = Database.Instance.ConnectionReadOnly.OpenAsync();
+                }
             }
         };
 
@@ -38,7 +41,7 @@ public partial class MainWindow : Window
 
     private void UpdateConnectionStatus()
     {
-        var state = Database.Instance.Connection.State;
+        var state = Database.Instance.ConnectionReadOnly.State;
         var status = state switch
         {
             ConnectionState.Closed => "Не подключено",

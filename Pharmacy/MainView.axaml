@@ -17,6 +17,12 @@
       <TabItem Header="Товары на складе">
         <pages:AddEmployeePage />
       </TabItem>
+      <TabItem Header="Ячейки на складе">
+        <pages:StorageCellsPage />
+      </TabItem>
+      <TabItem Header="Аналитика">
+        <pages:AnalyticsPage />
+      </TabItem>
     </TabControl>
   </Grid>
 </UserControl>

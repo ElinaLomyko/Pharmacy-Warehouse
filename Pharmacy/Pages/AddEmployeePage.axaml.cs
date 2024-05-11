@@ -1,10 +1,6 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Primitives;
-using Avalonia.Data;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Pharmacy.Data.Models;
 using Pharmacy.Data.Storage;
@@ -21,8 +17,6 @@ public partial class AddEmployeePage : UserControl
         {
             InsertEmployee();
         };
-
-        LoadWarehouses();
     }
 
     private void InsertEmployee()
@@ -36,7 +30,7 @@ public partial class AddEmployeePage : UserControl
         };
 
         BtnAdd.Content = "Добавление...";
-        EmployeeStorage.Instance.InsertAsync(emp).ContinueWith(_ =>
+        Database.Instance.InsertEmployeeAsync(emp).ContinueWith(_ =>
         {
             Dispatcher.UIThread.Invoke(() => {
                 BtnAdd.Content = "Добавить";
@@ -52,12 +46,18 @@ public partial class AddEmployeePage : UserControl
 
     private void LoadWarehouses()
     {
-        WarehouseStorage.Instance.GetWarehouses().ContinueWith(result =>
+        Database.Instance.GetWarehousesAsync().ContinueWith(result =>
         {
             Dispatcher.UIThread.Invoke(() =>
             {
                 CbWarehouse.ItemsSource = result.Result;
             });
         });
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        LoadWarehouses();
     }
 }
