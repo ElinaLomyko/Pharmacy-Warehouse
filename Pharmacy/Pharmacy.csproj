@@ -7,7 +7,14 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
-
+    <ItemGroup>
+        <Compile Update="**\*.xaml.cs">
+            <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <AvaloniaResource Include="**\*.xaml">
+            <SubType>Designer</SubType>
+        </AvaloniaResource>
+    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.10"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
@@ -16,5 +23,8 @@
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
         <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Controls\HamburgerMenu\HamburgerMenu.xaml" />
     </ItemGroup>
 </Project>

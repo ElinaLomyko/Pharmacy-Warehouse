@@ -1,21 +1,44 @@
 using System;
 using System.Data;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Threading;
-using Pharmacy.Storage;
+using Pharmacy.Data.Storage;
 
 namespace Pharmacy;
 
 public partial class MainWindow : Window
 {
+    public static INotificationManager NotificationManager;
+    
     public MainWindow()
     {
         InitializeComponent();
+
+        NotificationManager = new WindowNotificationManager(GetTopLevel(this));
+        
+        UpdateConnectionStatus();
+        Database.Instance.Connection.StateChange += (_, _) =>
+        {
+            Dispatcher.UIThread.Invoke(UpdateConnectionStatus);
+        };
+        BtnConnect.Click += (_, _) =>
+        {
+            if (Database.Instance.Connection.State == ConnectionState.Open)
+            {
+                Database.Instance.Connection.CloseAsync();
+            }
+            else
+            {
+                _ = Database.Instance.OpenIfNeededAsync();
+            }
+        };
+
     }
 
     private void UpdateConnectionStatus()
     {
-        var state = Database.Connection.State;
+        var state = Database.Instance.Connection.State;
         var status = state switch
         {
             ConnectionState.Closed => "Не подключено",
@@ -28,26 +51,5 @@ public partial class MainWindow : Window
         };
         LbConnectionStatus.Content = "Статус подключения: " + status;
         BtnConnect.Content = state == ConnectionState.Open ? "Отключиться" : "Подключиться";
-    }
-    
-    protected override void OnOpened(EventArgs e)
-    {
-        UpdateConnectionStatus();
-        Database.Connection.StateChange += (_, _) =>
-        {
-            Dispatcher.UIThread.Invoke(UpdateConnectionStatus);
-        };
-        BtnConnect.Click += (_, _) =>
-        {
-            if (Database.Connection.State == ConnectionState.Open)
-            {
-                Database.Connection.CloseAsync();
-            }
-            else
-            {
-                Database.Connection.CloseAsync().ContinueWith(x => Database.Connection.OpenAsync());
-            }
-        };
-        base.OnOpened(e);
     }
 }

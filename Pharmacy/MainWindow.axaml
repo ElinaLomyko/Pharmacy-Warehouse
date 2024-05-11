@@ -2,12 +2,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="using:Pharmacy"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Pharmacy.MainWindow"
         Title="Pharmacy">
+    
     <Grid ColumnDefinitions="*,*" RowDefinitions="30,*" Margin="20">
         <Label x:Name="LbConnectionStatus" Grid.Row="0" Grid.Column="0">Статус подключения: </Label>
         <Button x:Name="BtnConnect" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">Подключиться</Button>
+        <local:MainView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>
     
 </Window>

@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using System;
-using Pharmacy.Storage;
+using Pharmacy.Data.Storage;
 
 namespace Pharmacy;
 
@@ -12,7 +12,6 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        Database.SetupConnection();
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }

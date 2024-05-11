@@ -1,0 +1,22 @@
+<UserControl x:Class="Pharmacy.MainView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="using:Pharmacy.Pages">
+  <Grid>
+    <Grid.Styles>
+      <Style Selector="TextBlock.h2">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="MaxWidth" Value="400" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+      </Style>
+    </Grid.Styles>
+    <TabControl Name="Sidebar" TabStripPlacement="Left">
+      <TabItem Header="Добавление сотрудников">
+        <pages:AddEmployeePage />
+      </TabItem>
+      <TabItem Header="Товары на складе">
+        <pages:AddEmployeePage />
+      </TabItem>
+    </TabControl>
+  </Grid>
+</UserControl>
