@@ -280,7 +280,7 @@ public class Database
         }
     }
 
-    public async Task<List<ProductInfo>> GetAllProducts()
+    public async Task<List<ProductInfo>> GetAllProducts(int? countLessThan)
     {
         var connection = await GetAndHoldConnectionAsync();
         try
@@ -296,6 +296,12 @@ public class Database
                                   LEFT JOIN store.medical_equipment me on me.medical_equipment_id = p.medical_equipment_id 
                                   LEFT JOIN store.medicine m on m.medicine_id = p.medicine_id
                                   """;
+
+            if (countLessThan != null)
+            {
+                command.CommandText += $"\nWHERE COALESCE(hp.count, me.count, m.count) <= {countLessThan}";
+            }
+            
             await using var reader = await command.ExecuteReaderAsync();
             var result = new List<ProductInfo>();
 
@@ -303,14 +309,110 @@ public class Database
             {
                 result.Add(new ProductInfo
                 {
-                   Id = reader.GetInt32("product_id"),
-                   Name = reader.GetString("name"),
-                   Count = reader.GetDecimal("count")
+                    Id = reader.GetInt32("product_id"),
+                    Name = reader.GetString("name"),
+                    Count = reader.GetInt32("count")
                 });
             }
 
             await reader.CloseAsync();
             command.Connection = null;
+            return result;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+
+    public async Task<List<ProductInfo>> GetArrivedProductsByDate(DateTimeOffset date)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                                  SELECT
+                                    p.product_id,
+                                    COALESCE(hp.name, me.name, m.name) as name,
+                                    scp.count,
+                                    a.date_time
+                                  FROM store.arrival a
+                                  JOIN store.storage_cell_product scp on scp.arrival_id = a.arrival_id
+                                  LEFT JOIN store.product p on p.product_id = scp.product_id 
+                                  LEFT JOIN store.hygiene_product hp on hp.hygiene_product_id = p.hygiene_product_id
+                                  LEFT JOIN store.medical_equipment me on me.medical_equipment_id = p.medical_equipment_id 
+                                  LEFT JOIN store.medicine m on m.medicine_id = p.medicine_id
+                                  WHERE a.date_time >= @dt_from and a.date_time <= @dt_to
+                                  """;
+
+            var dtFrom = date.Date;
+            var dtTo = date.Date.AddDays(1);
+            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = dtFrom;
+            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = dtTo;
+            await using var reader = await command.ExecuteReaderAsync();
+            var result = new List<ProductInfo>();
+            while (reader.Read())
+            {
+                result.Add(new ProductInfo
+                {
+                    Id = reader.GetInt32("product_id"),
+                    Name = reader.GetString("name"),
+                    Count = reader.GetInt32("count")
+                });
+            }
+
+            await reader.CloseAsync();
+            command.Connection = null;
+            
+            return result;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+    
+    public async Task<List<ProductInfo>> GetDepartedProductsByDate(DateTimeOffset date)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                                  SELECT
+                                    p.product_id,
+                                    COALESCE(hp.name, me.name, m.name) as name,
+                                    scp.count,
+                                    d.date_time
+                                  FROM store.departure d
+                                  JOIN store.storage_cell_product scp on scp.departure_id = d.departure_id
+                                  LEFT JOIN store.product p on p.product_id = scp.product_id 
+                                  LEFT JOIN store.hygiene_product hp on hp.hygiene_product_id = p.hygiene_product_id
+                                  LEFT JOIN store.medical_equipment me on me.medical_equipment_id = p.medical_equipment_id 
+                                  LEFT JOIN store.medicine m on m.medicine_id = p.medicine_id
+                                  WHERE d.date_time >= @dt_from and d.date_time <= @dt_to
+                                  """;
+
+            var dtFrom = date.Date;
+            var dtTo = date.Date.AddDays(1);
+            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = dtFrom;
+            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = dtTo;
+            await using var reader = await command.ExecuteReaderAsync();
+            var result = new List<ProductInfo>();
+            while (reader.Read())
+            {
+                result.Add(new ProductInfo
+                {
+                    Id = reader.GetInt32("product_id"),
+                    Name = reader.GetString("name"),
+                    Count = reader.GetInt32("count")
+                });
+            }
+
+            await reader.CloseAsync();
+            command.Connection = null;
+            
             return result;
         }
         finally

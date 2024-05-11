@@ -15,7 +15,10 @@
         <pages:AddEmployeePage />
       </TabItem>
       <TabItem Header="Товары на складе">
-        <pages:AddEmployeePage />
+        <pages:ProductsPage />
+      </TabItem>
+      <TabItem Header="Прибытие/убытие">
+        <pages:ArrivedDepartedProductsPage />
       </TabItem>
       <TabItem Header="Ячейки на складе">
         <pages:StorageCellsPage />
