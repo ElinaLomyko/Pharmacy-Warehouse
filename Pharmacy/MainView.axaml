@@ -14,14 +14,17 @@
       <TabItem Header="Добавление сотрудников">
         <pages:AddEmployeePage />
       </TabItem>
+      <TabItem Header="Добавление товара">
+        <pages:AddProductPage />
+      </TabItem>
       <TabItem Header="Сотрудники">
         <pages:EmployeeListPage />
       </TabItem>
       <TabItem Header="Товары на складе">
         <pages:ProductsPage />
       </TabItem>
-      <TabItem Header="Прибытие/убытие">
-        <pages:ArrivedDepartedProductsPage />
+      <TabItem Header="Прибытие/убытие (на дату)">
+        <pages:ArrivedDepartedProductsOnDatePage />
       </TabItem>
       <TabItem Header="Ячейки на складе">
         <pages:StorageCellsPage />

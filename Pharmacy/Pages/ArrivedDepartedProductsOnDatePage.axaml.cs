@@ -8,9 +8,9 @@ using Pharmacy.Data.Storage;
 
 namespace Pharmacy.Pages;
 
-public partial class ArrivedDepartedProductsPage : UserControl
+public partial class ArrivedDepartedProductsOnDatePage : UserControl
 {
-    public ArrivedDepartedProductsPage()
+    public ArrivedDepartedProductsOnDatePage()
     {
         InitializeComponent();
 

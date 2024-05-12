@@ -457,4 +457,92 @@ public class Database
             ReleaseConnection();
         }
     }
+
+    private static async Task InsertProductAsync(
+        MySqlConnection connection,
+        int? hygieneProductId = null,
+        int? medicalEquipmentId = null,
+        int? medicineId = null)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            "INSERT INTO product (hygiene_product_id, medical_equipment_id, medicine_id) VALUES (@hygiene_product_id, @medical_equipment_id, @medicine_id)";
+
+        AddParameter("hygiene_product_id", hygieneProductId);
+        AddParameter("medical_equipment_id", medicalEquipmentId);
+        AddParameter("medicine_id", medicineId);
+
+        await command.ExecuteNonQueryAsync();
+        command.Connection = null;
+        return;
+
+        void AddParameter(string name, int? value)
+        {
+            if (value == null)
+            {
+                command.Parameters.Add(name, MySqlDbType.Null).Value = null;
+            }
+            else
+            {
+                command.Parameters.Add(name, MySqlDbType.Int32).Value = value.Value;
+            }
+        }
+    }
+    
+    public async Task InsertHygieneProductAsync(ProductInfo productInfo)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO hygiene_product (name, count) VALUES (@name, @count)";
+            command.Parameters.Add("name", MySqlDbType.VarChar).Value = productInfo.Name;
+            command.Parameters.Add("count", MySqlDbType.Int32).Value = productInfo.Count;
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+            await InsertProductAsync(connection, hygieneProductId: (int) command.LastInsertedId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+    
+    public async Task InsertMedicineAsync(ProductInfo productInfo)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO medicine (name, count) VALUES (@name, @count)";
+            command.Parameters.Add("name", MySqlDbType.VarChar).Value = productInfo.Name;
+            command.Parameters.Add("count", MySqlDbType.Int32).Value = productInfo.Count;
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+            await InsertProductAsync(connection, medicineId: (int) command.LastInsertedId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+    
+    public async Task InsertMedicalEquipmentAsync(ProductInfo productInfo)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO medical_equipment (name, count) VALUES (@name, @count)";
+            command.Parameters.Add("name", MySqlDbType.VarChar).Value = productInfo.Name;
+            command.Parameters.Add("count", MySqlDbType.Int32).Value = productInfo.Count;
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+            await InsertProductAsync(connection, medicalEquipmentId: (int) command.LastInsertedId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
 }
