@@ -545,4 +545,73 @@ public class Database
             ReleaseConnection();
         }
     }
+
+    private async Task InsertStorageCellProductAsync(MySqlConnection connection, int count, int? arrivalId, int? departureId, int storageCellId, int productId)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            "INSERT INTO storage_cell_product (count, arrival_id, departure_id, storage_cell_id, product_id) VALUES (@count, @arrival_id, @departure_id, @storage_cell_id, @product_id)";
+
+        command.Parameters.Add("count", MySqlDbType.Int32).Value = count;
+        AddParameter("arrival_id", arrivalId);
+        AddParameter("departure_id", departureId);
+        command.Parameters.Add("storage_cell_id", MySqlDbType.Int32).Value = storageCellId;
+        command.Parameters.Add("product_id", MySqlDbType.Int32).Value = productId;
+
+        await command.ExecuteNonQueryAsync();
+        command.Connection = null;
+        
+        return;
+        
+        void AddParameter(string name, int? value)
+        {
+            if (value == null)
+            {
+                command.Parameters.Add(name, MySqlDbType.Null).Value = null;
+            }
+            else
+            {
+                command.Parameters.Add(name, MySqlDbType.Int32).Value = value.Value;
+            }
+        }
+    }
+    
+    public async Task InsertArrivalAsync(int productId, int cellId, int count, DateTimeOffset arrivalDate)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO arrival (date_time) VALUES (@date_time)";
+            command.Parameters.Add("date_time", MySqlDbType.DateTime).Value = arrivalDate.DateTime;
+
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+
+            await InsertStorageCellProductAsync(connection, count, (int)command.LastInsertedId, null, cellId, productId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+    public async Task InsertDepartureAsync(int productId, int cellId, int count, DateTimeOffset departureDate)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO departure (date_time) VALUES (@date_time)";
+            command.Parameters.Add("date_time", MySqlDbType.DateTime).Value = departureDate.DateTime;
+
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+
+            await InsertStorageCellProductAsync(connection, count, null, (int)command.LastInsertedId, cellId, productId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
 }

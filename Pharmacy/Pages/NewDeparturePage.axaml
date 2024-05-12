@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:Pharmacy.Data.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Pharmacy.Pages.NewDeparturePage">
+    <StackPanel MaxWidth="300">
+        <Label Margin="0 5">Дата убытия:</Label>
+        <DatePicker x:Name="DpDeparture" />
+        <Label Margin="0 5">Товар:</Label>
+        <ComboBox x:Name="CbProduct" 
+                  MinWidth="300"
+                  DisplayMemberBinding="{Binding Name, DataType=models:ProductInfo}" />
+        <Label Margin="0 5">Ячейка:</Label>
+        <ComboBox x:Name="CbCell" 
+                  MinWidth="300" 
+                  DisplayMemberBinding="{Binding Location, DataType=models:StorageCellFull}" />
+        <Label Margin="0 5">Количество:</Label>
+        <TextBox x:Name="TbCount"></TextBox>
+        <Button x:Name="BtnAdd" Margin="0 5">Добавить</Button>
+    </StackPanel>
+</UserControl>

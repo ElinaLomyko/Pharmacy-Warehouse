@@ -17,6 +17,12 @@
       <TabItem Header="Добавление товара">
         <pages:AddProductPage />
       </TabItem>
+      <TabItem Header="Оформить прибытие">
+        <pages:NewArrivalPage />
+      </TabItem>
+      <TabItem Header="Оформить убытие">
+        <pages:NewDeparturePage />
+      </TabItem>
       <TabItem Header="Сотрудники">
         <pages:EmployeeListPage />
       </TabItem>
