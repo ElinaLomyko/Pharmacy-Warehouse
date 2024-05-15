@@ -10,7 +10,10 @@
             <ComboBoxItem>Убытие</ComboBoxItem>
         </ComboBox>
         <Label Margin="10 10 10 0">Дата:</Label>
-        <DatePicker x:Name="DpDate" Margin="10"></DatePicker>
+        <StackPanel Orientation="Horizontal">
+            <DatePicker x:Name="DpDate" Margin="10"></DatePicker>
+            <CheckBox x:Name="CbForWeek">За всю неделю</CheckBox>
+        </StackPanel>
         <DataGrid x:Name="DgData" 
                   AutoGenerateColumns="True" 
                   IsReadOnly="True" 

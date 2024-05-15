@@ -23,21 +23,27 @@ public partial class ArrivedDepartedProductsOnDatePage : UserControl
         {
             _ = LoadData();
         };
+
+        CbForWeek.IsCheckedChanged += (sender, args) =>
+        {
+            _ = LoadData();
+        };
     }
 
     private async Task LoadData()
     {
         var isArrival = CbType.SelectedIndex == 0;
-        var date = DpDate.SelectedDate ?? DateTimeOffset.Now;
+        var startDate = DpDate.SelectedDate ?? DateTimeOffset.Now;
+        var endDate = startDate + TimeSpan.FromDays(CbForWeek.IsChecked == true ? 7 : 1); 
 
         if (isArrival)
         {
-            var result = await Database.Instance.GetArrivedProductsByDate(date);
+            var result = await Database.Instance.GetArrivedProductsByDate(startDate, endDate);
             Dispatcher.UIThread.Invoke(() => { DgData.ItemsSource = result; });
         }
         else
         {
-            var result = await Database.Instance.GetDepartedProductsByDate(date);
+            var result = await Database.Instance.GetDepartedProductsByDate(startDate, endDate);
             Dispatcher.UIThread.Invoke(() => { DgData.ItemsSource = result; });
         }
     }

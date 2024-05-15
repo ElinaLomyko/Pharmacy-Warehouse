@@ -325,7 +325,7 @@ public class Database
         }
     }
 
-    public async Task<List<ProductInfo>> GetArrivedProductsByDate(DateTimeOffset date)
+    public async Task<List<ProductInfo>> GetArrivedProductsByDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         var connection = await GetAndHoldConnectionAsync();
         try
@@ -346,10 +346,8 @@ public class Database
                                   WHERE a.date_time >= @dt_from and a.date_time <= @dt_to
                                   """;
 
-            var dtFrom = date.Date;
-            var dtTo = date.Date.AddDays(1);
-            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = dtFrom;
-            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = dtTo;
+            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = startDate;
+            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = endDate;
             await using var reader = await command.ExecuteReaderAsync();
             var result = new List<ProductInfo>();
             while (reader.Read())
@@ -373,7 +371,7 @@ public class Database
         }
     }
     
-    public async Task<List<ProductInfo>> GetDepartedProductsByDate(DateTimeOffset date)
+    public async Task<List<ProductInfo>> GetDepartedProductsByDate(DateTimeOffset startDate, DateTimeOffset endDate)
     {
         var connection = await GetAndHoldConnectionAsync();
         try
@@ -394,10 +392,8 @@ public class Database
                                   WHERE d.date_time >= @dt_from and d.date_time <= @dt_to
                                   """;
 
-            var dtFrom = date.Date;
-            var dtTo = date.Date.AddDays(1);
-            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = dtFrom;
-            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = dtTo;
+            command.Parameters.Add("dt_from", MySqlDbType.Date).Value = startDate;
+            command.Parameters.Add("dt_to", MySqlDbType.Date).Value = endDate;
             await using var reader = await command.ExecuteReaderAsync();
             var result = new List<ProductInfo>();
             while (reader.Read())
