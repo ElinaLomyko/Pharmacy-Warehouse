@@ -666,4 +666,42 @@ public class Database
             ReleaseConnection();
         }
     }
+
+    public async Task DeleteEmployeeAsync(int id)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText =$"DELETE FROM employee where employee_id = {id}";
+            
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+
+    public async Task SaveEmployeeAsync(Employee item)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText =$"UPDATE store.employee SET first_name = @firstName, last_name = @lastName, warehouse_id = @warehouseId, role = @role WHERE employee_id = {item.Id}";
+            command.Parameters.Add("firstName", MySqlDbType.VarChar).Value = item.FirstName;
+            command.Parameters.Add("lastName", MySqlDbType.VarChar).Value = item.LastName;
+            command.Parameters.Add("role", MySqlDbType.VarChar).Value = item.Role;
+            command.Parameters.Add("warehouseId", MySqlDbType.Int32).Value = item.WarehouseId;
+            
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
 }

@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
 using Pharmacy.Data.Models;
 using Pharmacy.Data.Storage;
+using Pharmacy.Windows;
 
 namespace Pharmacy.Pages;
 
@@ -21,10 +25,59 @@ public partial class EmployeeListPage : UserControl
         {
             Console.WriteLine();
         };
+
+        DgEmployee.SelectionChanged += (sender, args) =>
+        {
+            BtnDelete.IsEnabled = DgEmployee.SelectedItem != null;
+            BtnEdit.IsEnabled = DgEmployee.SelectedItem != null;
+        };
+
+        BtnDelete.Click += (sender, args) =>
+        {
+            _ = DeleteItem();
+        };
+
+        BtnEdit.Click += (sender, args) =>
+        {
+            _ = EditItem();
+        };
         
         DgEmployee.DataContext = this;
     }
 
+
+    private async Task EditItem()
+    {
+        
+        var dialog = new EmployeeWindow
+        {
+            Item = (Employee)DgEmployee.SelectedItem
+        };
+        await dialog.ShowDialog((Window) VisualRoot);
+        _ = LoadData();
+    }
+
+    private async Task DeleteItem()
+    {
+        var result =
+            await MessageBoxManager.GetMessageBoxStandard(
+                new MessageBoxStandardParams
+                {
+                    ContentTitle = "Вы уверены?",
+                    ContentMessage = "Вы действительно хотите удалить сотрудника?",
+                    ButtonDefinitions = ButtonEnum.YesNoCancel
+                }).ShowWindowAsync();
+
+        if (result.HasFlag(ButtonResult.Yes))
+        {
+            if (DgEmployee.SelectedItem is Employee e)
+            {
+                await Database.Instance.DeleteEmployeeAsync(e.Id);
+                _ = LoadData();
+            }
+        }
+    }
+    
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);

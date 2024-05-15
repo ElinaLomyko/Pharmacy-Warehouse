@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:Pharmacy.Data.Models"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+        Width="400"
+        Height="350"
+        x:Class="Pharmacy.Windows.EmployeeWindow"
+        Title="Редактирование сотрудника">
+    <StackPanel MaxWidth="300">
+        <Label Margin="0 5">Имя:</Label>
+        <TextBox x:Name="TbFirstName"></TextBox>
+        <Label Margin="0 5">Фамилия:</Label>
+        <TextBox x:Name="TbLastName"></TextBox>
+        <Label Margin="0 5">Склад:</Label>
+        <ComboBox 
+            Width="300"
+            x:Name="CbWarehouse"
+            DisplayMemberBinding="{Binding Address}" 
+            x:DataType="models:Warehouse" />
+        <Label Margin="0 5">Должность:</Label>
+        <TextBox x:Name="TbRole"></TextBox>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button x:Name="BtnSave" Margin="10">Сохранить</Button>
+            <Button x:Name="BtnCancel" Margin="10">Отмена</Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

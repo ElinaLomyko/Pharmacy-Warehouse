@@ -8,22 +8,33 @@
              x:Class="Pharmacy.Pages.EmployeeListPage"
              x:DataType="pages:EmployeeListPage">
 
-    <DataGrid x:Name="DgEmployee"
-              IsReadOnly="True" 
-              GridLinesVisibility="All"
-              BorderThickness="1" BorderBrush="Gray"
-              ItemsSource="{Binding Employees}"
-              x:DataType="pages:EmployeeListPage">
-        
-        <Design.DataContext>
-            <pages:EmployeeListPage/>
-        </Design.DataContext>
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel 
+            Grid.Row="0" 
+            Margin="0 0 0 8" 
+            Orientation="Horizontal" 
+            VerticalAlignment="Bottom">
+            <Button Name="BtnDelete" IsEnabled="false">Удалить</Button>
+            <Button Margin="10 0" Name="BtnEdit" IsEnabled="False">Изменить</Button>
+        </StackPanel>
+        <DataGrid x:Name="DgEmployee"
+                  Grid.Row="1"
+                  IsReadOnly="True" 
+                  GridLinesVisibility="All"
+                  BorderThickness="1" BorderBrush="Gray"
+                  ItemsSource="{Binding Employees}"
+                  x:DataType="pages:EmployeeListPage">
+            
+            <Design.DataContext>
+                <pages:EmployeeListPage/>
+            </Design.DataContext>
 
-        <DataGrid.Columns>
-            <DataGridTextColumn Binding="{Binding FirstName}" Header="Имя" x:DataType="models:Employee" />
-            <DataGridTextColumn Binding="{Binding LastName}" Header="Фамилия" x:DataType="models:Employee" />
-            <DataGridTextColumn Binding="{Binding Warehouse.Address}" Header="Фамилия" x:DataType="models:Employee" />
-            <DataGridTextColumn Binding="{Binding Role}" Header="Должность" x:DataType="models:Employee" />
-        </DataGrid.Columns>
-    </DataGrid>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding FirstName}" Header="Имя" x:DataType="models:Employee" />
+                <DataGridTextColumn Binding="{Binding LastName}" Header="Фамилия" x:DataType="models:Employee" />
+                <DataGridTextColumn Binding="{Binding Warehouse.Address}" Header="Фамилия" x:DataType="models:Employee" />
+                <DataGridTextColumn Binding="{Binding Role}" Header="Должность" x:DataType="models:Employee" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </UserControl>
