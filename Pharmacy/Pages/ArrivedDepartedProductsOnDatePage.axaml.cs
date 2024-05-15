@@ -39,12 +39,20 @@ public partial class ArrivedDepartedProductsOnDatePage : UserControl
         if (isArrival)
         {
             var result = await Database.Instance.GetArrivedProductsByDate(startDate, endDate);
-            Dispatcher.UIThread.Invoke(() => { DgData.ItemsSource = result; });
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                DgData.ItemsSource = result;
+                UpdateLayout();
+            });
         }
         else
         {
             var result = await Database.Instance.GetDepartedProductsByDate(startDate, endDate);
-            Dispatcher.UIThread.Invoke(() => { DgData.ItemsSource = result; });
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                DgData.ItemsSource = result;
+                UpdateLayout();
+            });
         }
     }
 }

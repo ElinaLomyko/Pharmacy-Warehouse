@@ -290,7 +290,10 @@ public class Database
                                   SELECT 
                                     p.product_id,
                                     COALESCE(hp.name, me.name, m.name) as name,
-                                    COALESCE(hp.count, me.count, m.count) as count
+                                    COALESCE(hp.count, me.count, m.count) as count,
+                                    p.hygiene_product_id as hpid,
+                                    p.medical_equipment_id as meid,
+                                    p.medicine_id as mid
                                   FROM store.product p 
                                   LEFT JOIN store.hygiene_product hp on hp.hygiene_product_id = p.hygiene_product_id
                                   LEFT JOIN store.medical_equipment me on me.medical_equipment_id = p.medical_equipment_id 
@@ -311,7 +314,11 @@ public class Database
                 {
                     Id = reader.GetInt32("product_id"),
                     Name = reader.GetString("name"),
-                    Count = reader.GetInt32("count")
+                    Count = reader.GetInt32("count"),
+                    HygieneProductId = reader.IsDBNull("hpid") ? null : reader.GetInt32("hpid"),
+                    MedicalEquipmentId = reader.IsDBNull("meid") ? null : reader.GetInt32("meid"),
+                    MedicineId = reader.IsDBNull("mid") ? null : reader.GetInt32("mid")
+                        
                 });
             }
 
@@ -604,6 +611,55 @@ public class Database
             command.Connection = null;
 
             await InsertStorageCellProductAsync(connection, count, null, (int)command.LastInsertedId, cellId, productId);
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+
+    public async Task DeleteProductAsync(int id)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText =$"DELETE FROM product where product.product_id = {id}";
+            
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
+        }
+        finally
+        {
+            ReleaseConnection();
+        }
+    }
+
+    public async Task UpdateProductAsync(ProductInfo productInfo)
+    {
+        var connection = await GetAndHoldConnectionAsync();
+        try
+        {
+            await using var command = connection.CreateCommand();
+
+            if (productInfo.HygieneProductId != null)
+            {
+                command.CommandText = $"UPDATE hygiene_product SET name = @name, count = @count WHERE hygiene_product_id = {productInfo.HygieneProductId}";
+            }
+            else if (productInfo.MedicalEquipmentId != null)
+            {
+                command.CommandText = $"UPDATE medical_equipment SET name = @name, count = @count WHERE medical_equipment_id = {productInfo.MedicalEquipmentId}";
+            }
+            else if (productInfo.MedicineId != null)
+            {
+                command.CommandText = $"UPDATE medicine SET name = @name, count = @count WHERE medicine_id = {productInfo.MedicineId}";
+            }
+            
+            command.Parameters.Add("name", MySqlDbType.VarChar).Value = productInfo.Name;
+            command.Parameters.Add("count", MySqlDbType.Int32).Value = (int) productInfo.Count;
+            
+            await command.ExecuteNonQueryAsync();
+            command.Connection = null;
         }
         finally
         {

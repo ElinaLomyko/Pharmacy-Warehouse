@@ -4,18 +4,34 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Pharmacy.Pages.ProductsPage">
-    <StackPanel>
-        <CheckBox x:Name="CbOnlyMissing">Показать только отсутствующие товары</CheckBox>
-        <CheckBox x:Name="CbRunningOut">Показать заканчивающиеся товары</CheckBox>
-        <Label Margin="0 10 0 6">Фильтр count меньше X:</Label>
-        <StackPanel Orientation="Horizontal" Margin="0 0 0 16">
-            <TextBox x:Name="TbCount"></TextBox>
-            <Button x:Name="BtnApply">Применить</Button>
+    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*">
+        <StackPanel>
+            <CheckBox x:Name="CbOnlyMissing">Показать только отсутствующие товары</CheckBox>
+            <CheckBox x:Name="CbRunningOut">Показать заканчивающиеся товары</CheckBox>
+            <Label Margin="0 10 0 6">Фильтр count меньше X:</Label>
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 16">
+                <TextBox x:Name="TbCount"></TextBox>
+                <Button x:Name="BtnApply" Margin="10 0 0 0">Применить</Button>
+            </StackPanel>
         </StackPanel>
         <DataGrid x:Name="DgProducts" 
-                  AutoGenerateColumns="True" 
+                  AutoGenerateColumns="True"
                   IsReadOnly="True" 
                   GridLinesVisibility="All"
-                  BorderThickness="1" BorderBrush="Gray"/>
-    </StackPanel>
+                  BorderThickness="1" BorderBrush="Gray"
+                  Grid.Row="1"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2" />
+        <StackPanel 
+            Grid.Row="0" 
+            Grid.Column="1" 
+            Margin="0 0 0 8" 
+            Orientation="Horizontal" 
+            VerticalAlignment="Bottom" 
+            Name="SpEdit"
+            IsVisible="False">
+            <Button Name="BtnDelete" Margin="10 0">Удалить</Button>
+            <Button Name="BtnEdit">Изменить</Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

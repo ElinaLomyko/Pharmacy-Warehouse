@@ -4,20 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Pharmacy.Pages.ArrivedDepartedProductsOnDatePage">
-    <StackPanel>
-        <ComboBox x:Name="CbType" SelectedIndex="0" Margin="10">
-            <ComboBoxItem>Прибытие</ComboBoxItem>
-            <ComboBoxItem>Убытие</ComboBoxItem>
-        </ComboBox>
-        <Label Margin="10 10 10 0">Дата:</Label>
-        <StackPanel Orientation="Horizontal">
-            <DatePicker x:Name="DpDate" Margin="10"></DatePicker>
-            <CheckBox x:Name="CbForWeek">За всю неделю</CheckBox>
+    <Grid ColumnDefinitions="*" RowDefinitions="Auto,*">
+        <StackPanel>
+            <ComboBox x:Name="CbType" SelectedIndex="0" Margin="10">
+                <ComboBoxItem>Прибытие</ComboBoxItem>
+                <ComboBoxItem>Убытие</ComboBoxItem>
+            </ComboBox>
+            <Label Margin="10 10 10 0">Дата:</Label>
+            <StackPanel Orientation="Horizontal">
+                <DatePicker x:Name="DpDate" Margin="10"></DatePicker>
+                <CheckBox x:Name="CbForWeek">За всю неделю</CheckBox>
+            </StackPanel>
         </StackPanel>
         <DataGrid x:Name="DgData" 
                   AutoGenerateColumns="True" 
                   IsReadOnly="True" 
                   GridLinesVisibility="All"
-                  BorderThickness="1" BorderBrush="Gray"/>
-    </StackPanel>
+                  BorderThickness="1" BorderBrush="Gray"
+                  Grid.Row="1" />
+    </Grid>
 </UserControl>
